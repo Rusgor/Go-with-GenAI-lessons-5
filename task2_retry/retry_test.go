@@ -79,6 +79,26 @@ func TestDo_DoesNotRetryNonTemporaryErrors(t *testing.T) {
 	}
 }
 
+func TestDo_RejectsInvalidAttemptCount(t *testing.T) {
+	for _, maxAttempts := range []int{0, -1} {
+		t.Run(fmt.Sprintf("maxAttempts=%d", maxAttempts), func(t *testing.T) {
+			calls := 0
+			op := func() (string, error) {
+				calls++
+				return "", nil
+			}
+
+			_, err := Do(op, maxAttempts, 0)
+			if err == nil {
+				t.Fatal("expected an error for an invalid attempt count")
+			}
+			if calls != 0 {
+				t.Errorf("operation should not run for an invalid attempt count, got %d calls", calls)
+			}
+		})
+	}
+}
+
 func TestDo_WaitsBackoffBetweenAttempts(t *testing.T) {
 	op := NewFlakyOperation(2, "ok")
 	backoff := 20 * time.Millisecond

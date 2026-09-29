@@ -48,6 +48,14 @@ func TestValidateRegistration_ShortPassword(t *testing.T) {
 	}
 }
 
+func TestValidateRegistration_PasswordCountsRunes(t *testing.T) {
+	form := RegistrationForm{Email: "user@example.com", Password: "парольки", Age: 25}
+
+	if err := ValidateRegistration(form); err != nil {
+		t.Errorf("expected an 8-rune password to be valid, got: %v", err)
+	}
+}
+
 func TestValidateRegistration_InvalidAge(t *testing.T) {
 	cases := []struct {
 		name string

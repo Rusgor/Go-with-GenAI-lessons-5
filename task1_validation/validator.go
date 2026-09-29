@@ -3,6 +3,11 @@
 // невалідних полів, а не лише першого.
 package validation
 
+import (
+	"strings"
+	"unicode/utf8"
+)
+
 // RegistrationForm — вхідні дані форми реєстрації, які потрібно перевірити.
 type RegistrationForm struct {
 	Email    string
@@ -16,7 +21,7 @@ type RegistrationForm struct {
 // TODO(Завдання 1): визначте поля структури.
 // Підказка: вам знадобиться щонайменше поле Fields []string.
 type ValidationError struct {
-	// TODO: додайте поля
+	Fields []string
 }
 
 // Error реалізує інтерфейс error.
@@ -25,8 +30,7 @@ type ValidationError struct {
 // невалідні поля, наприклад:
 // "registration invalid: fields email, password"
 func (e *ValidationError) Error() string {
-	// TODO: реалізуйте
-	panic("not implemented")
+	return "registration invalid: fields " + strings.Join(e.Fields, ", ")
 }
 
 // ValidateRegistration перевіряє форму реєстрації та повертає
@@ -41,6 +45,26 @@ func (e *ValidationError) Error() string {
 // TODO(Завдання 1): реалізуйте функцію так, щоб перевірка НЕ зупинялась
 // на першому невалідному полі — потрібно зібрати всі помилки одразу.
 func ValidateRegistration(f RegistrationForm) error {
-	// TODO: реалізуйте
-	panic("not implemented")
+	var invalidFields []string
+
+	// Check email
+	if f.Email == "" {
+		invalidFields = append(invalidFields, "email")
+	}
+
+	// Check password
+	if utf8.RuneCountInString(f.Password) < 8 {
+		invalidFields = append(invalidFields, "password")
+	}
+
+	// Check age
+	if f.Age < 0 || f.Age > 150 {
+		invalidFields = append(invalidFields, "age")
+	}
+
+	if len(invalidFields) > 0 {
+		return &ValidationError{Fields: invalidFields}
+	}
+
+	return nil
 }
