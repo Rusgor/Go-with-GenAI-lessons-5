@@ -24,15 +24,6 @@ type Operation func() (string, error)
 //
 // Якщо всі спроби вичерпано, Do повертає чітко обгорнуту фінальну помилку
 // (з інформацією про кількість спроб).
-//
-// TODO(Завдання 2): реалізуйте функцію Do.
-// Вимоги:
-//   - maxAttempts має бути >= 1; якщо операція вдається одразу — повторів немає
-//   - між спробами (окрім останньої) чекайте backoff перед наступною спробою
-//   - якщо помилка НЕ є errors.Is(err, ErrTemporary) — не повторюйте спробу,
-//     одразу поверніть обгорнуту помилку
-//   - якщо всі спроби вичерпано — поверніть обгорнуту фінальну помилку,
-//     яка через errors.Is все ще розпізнається як ErrTemporary
 func Do(op Operation, maxAttempts int, backoff time.Duration) (string, error) {
 	if maxAttempts < 1 {
 		return "", fmt.Errorf("retry: maxAttempts must be at least 1 (got %d)", maxAttempts)

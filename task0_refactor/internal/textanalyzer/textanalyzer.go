@@ -14,8 +14,6 @@ var ErrEmptyText = errors.New("textanalyzer: empty text")
 // WordCount повертає кількість слів у text (розділених пробільними
 // символами). Якщо text порожній (або складається лише з пробілів),
 // повертає помилку, що через %w обгортає ErrEmptyText.
-//
-// TODO(Завдання 0): реалізуйте.
 func WordCount(text string) (int, error) {
 	trimmed := strings.TrimSpace(text)
 	if trimmed == "" {
@@ -27,8 +25,6 @@ func WordCount(text string) (int, error) {
 
 // CharCount повертає кількість символів (рун) у text, без урахування
 // пробільних символів на початку/в кінці.
-//
-// TODO(Завдання 0): реалізуйте.
 func CharCount(text string) int {
 	trimmed := strings.TrimSpace(text)
 	return len([]rune(trimmed))

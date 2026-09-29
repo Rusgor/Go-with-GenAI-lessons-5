@@ -2,6 +2,8 @@ package validation
 
 import (
 	"errors"
+	"fmt"
+	"reflect"
 	"testing"
 )
 
@@ -101,10 +103,9 @@ func TestValidateRegistration_ReportsAllInvalidFieldsAtOnce(t *testing.T) {
 		t.Fatalf("expected *ValidationError, got %T", err)
 	}
 
-	for _, field := range []string{"email", "password", "age"} {
-		if !containsField(valErr.Fields, field) {
-			t.Errorf("expected Fields to contain %q among all invalid fields, got %v", field, valErr.Fields)
-		}
+	wantFields := []string{"email", "password", "age"}
+	if !reflect.DeepEqual(valErr.Fields, wantFields) {
+		t.Errorf("ValidationError.Fields = %v, want %v", valErr.Fields, wantFields)
 	}
 }
 
@@ -117,6 +118,17 @@ func TestValidateRegistration_ErrorMessageIsReadable(t *testing.T) {
 	}
 	if err.Error() == "" {
 		t.Error("expected Error() to return a non-empty, readable message")
+	}
+}
+
+func TestValidateRegistration_AgeBoundariesAreValid(t *testing.T) {
+	for _, age := range []int{0, 150} {
+		t.Run(fmt.Sprintf("age=%d", age), func(t *testing.T) {
+			form := RegistrationForm{Email: "user@example.com", Password: "supersecret", Age: age}
+			if err := ValidateRegistration(form); err != nil {
+				t.Errorf("expected age %d to be valid, got: %v", age, err)
+			}
+		})
 	}
 }
 

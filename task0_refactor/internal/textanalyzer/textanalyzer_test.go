@@ -31,3 +31,20 @@ func TestCharCount(t *testing.T) {
 		t.Errorf("CharCount(...) = %d, want 5", got)
 	}
 }
+
+func TestWordCount_UnicodeAndWhitespace(t *testing.T) {
+	got, err := WordCount("Привіт,\t світе!\nGo")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if got != 3 {
+		t.Errorf("WordCount(...) = %d, want 3", got)
+	}
+}
+
+func TestCharCount_CountsUnicodeRunesAndTrimsWhitespace(t *testing.T) {
+	got := CharCount(" \tПривіт 🌍\n")
+	if got != 8 {
+		t.Errorf("CharCount(...) = %d, want 8", got)
+	}
+}
